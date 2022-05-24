@@ -24,6 +24,10 @@ This library is designed to work with any Signal-compatible API.
 [deploy2]: https://github.com/madeindra/signal-setup-guide
 
 ## How to use it
+1) Create MPC device by linking to signal (need to scan QR Code)
+./gg18-mpc-ecdsa login --device-name mpc-dev-1
+./gg18-mpc-ecdsa login --device-name mpc-dev-2
+./gg18-mpc-ecdsa login --device-name mpc-dev-3
 
 ### Construct SignalClient
 
