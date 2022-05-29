@@ -24,10 +24,34 @@ This library is designed to work with any Signal-compatible API.
 [deploy2]: https://github.com/madeindra/signal-setup-guide
 
 ## How to use it
-1) Create MPC device by linking to signal (need to scan QR Code)
-./gg18-mpc-ecdsa login --device-name mpc-dev-1
-./gg18-mpc-ecdsa login --device-name mpc-dev-2
-./gg18-mpc-ecdsa login --device-name mpc-dev-3
+1) Creating secrets.json file for communication bet. MPC nodes via Signal Server (need to scan QR Code)
+```rust
+./gg20-mpc-ecdsa login --device-name mpc-dev-1
+./gg20-mpc-ecdsa login --device-name mpc-dev-2
+./gg20-mpc-ecdsa login --device-name mpc-dev-3
+```
+2) Get the public key of each MPC node stored in secrets.json and stored it into group.json
+```rust
+./gg20-mpc-ecdsa me --json (from terminal/mpc-dev 1)
+./gg20-mpc-ecdsa me --json (from terminal/mpc-dev 2)
+./gg20-mpc-ecdsa me --json (from terminal/mpc-dev 3)
+```
+3) Perform DKG and save the local key share
+```rust
+./gg20-mpc-ecdsa keygen -t 1 -n 3 --group group.json --output local-share1.json
+./gg20-mpc-ecdsa keygen -t 1 -n 3 --group group.json --output local-share2.json
+./gg20-mpc-ecdsa keygen -t 1 -n 3 --group group.json --output local-share3.json
+```
+4) Perform Offline/Async Signing and save the presign signature
+```rust
+./gg20-mpc-ecdsa presign --local-key local-share1.json --group group.json --output presign-share1.json
+./gg20-mpc-ecdsa presign --local-key local-share2.json --group group.json --output presign-share2.json
+```
+5) Perform MPC signing using the presign signature to generate a complete signature
+```rust
+./gg20-mpc-ecdsa sign --presign-share presign-share1.json --group group.json --digits my_first_tx
+./gg20-mpc-ecdsa sign --presign-share presign-share2.json --group group.json --digits my_first_tx
+```
 
 ### Construct SignalClient
 
