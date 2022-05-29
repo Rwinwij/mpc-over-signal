@@ -4,7 +4,7 @@
 
 This library intends to leverage on the SignalApp built by ZenGo Team to exchange messages 
 with other connected nodes (parties) over secure transport backed by Signal. We use it to 
-perform DKG (Distributed Key Generation),signing and verification based on multi-party ECDSA
+perform DKG (Distributed Key Generation) and MPC Signing based on GG-2020 Multi-party ECDSA 
 developed by the ZenGo Team : https://github.com/ZenGo-X/multi-party-ecdsa
 
 Together with [round_based] crate, it allows you running any MPC protocol that implements [round_based::StateMachine][SM] 
