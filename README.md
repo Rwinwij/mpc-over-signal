@@ -24,7 +24,7 @@ This library is designed to work with any Signal-compatible API.
 [deploy2]: https://github.com/madeindra/signal-setup-guide
 
 ## How to use it
-1) Creating secrets.json file for communication bet. MPC nodes via Signal Server (need to scan QR Code)
+1) Create secrets.json file for communication between MPC nodes via Signal Server (need to scan QR Code)
 ```rust
 ./gg20-mpc-ecdsa login --device-name mpc-dev-1
 ./gg20-mpc-ecdsa login --device-name mpc-dev-2
