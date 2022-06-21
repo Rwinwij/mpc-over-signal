@@ -17,6 +17,8 @@ use curv::BigInt;
 use core::slice;
 use std::os::raw::{c_char, c_uchar};
 use std::path::PathBuf;
+use bytes::Bytes;
+
 mod common;
 mod dkg;
 mod presigning;
@@ -145,8 +147,8 @@ pub async fn presign_run(
 pub async fn sign_run (
     my_ind: u16,
     presign_share: Vec<u8>,
-    message: &str,
-) -> Result<String> {
+    message_hash: Vec<u8>,
+) -> Result<(String, String, String)> {
     //MPC Signing Stage starts here
     let args: OfflineSignCli = OfflineSignCli::from_args();
     //Note: supposed to be an argument parsed in terminal, hardcoded for now
@@ -162,8 +164,9 @@ pub async fn sign_run (
     tokio::pin!(incoming);
     tokio::pin!(outgoing);
 
+    let msg_hash:Bytes = Bytes::from(message_hash);
     let (signing, partial_signature) = SignManual::new(
-        BigInt::from_bytes(message.as_bytes()),
+        BigInt::from_bytes(&msg_hash),
         completed_offline_stage,
     )?;
     
@@ -184,9 +187,12 @@ pub async fn sign_run (
     let signature = signing
         .complete(&partial_signatures)
         .context("online stage failed")?;
-    
-    let signature = serde_json::to_string(&signature).context("serialize signature")?;    
-    Ok(signature)
+
+    let sig_r: String = signature.sig_r().to_string(); //BigInt
+    let sig_s: String = signature.sig_s().to_string(); //BigInt
+    let sig_v: String = signature.sig_v().to_string();
+       
+    Ok((sig_r, sig_s, sig_v))
 }
 
 /*

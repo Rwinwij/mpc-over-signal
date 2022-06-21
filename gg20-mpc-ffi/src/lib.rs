@@ -88,24 +88,22 @@ pub extern "C" fn wire_sign(
     index: u16,
     presign_vec: *const c_uchar,
     presign_len: usize,
-    tx_message: *const c_char,
+    keccak256_payload: *const c_uchar,
+    keccak256_payload_len: usize,
 ) {
     let rt = runtime!();
     let presign_share = unsafe {slice::from_raw_parts(presign_vec, presign_len)};
     let presign_share: Vec<u8> = Vec::from(presign_share);
 
-    let c_str = unsafe {
-        assert!(!tx_message.is_null());
-
-        CStr::from_ptr(tx_message)
-    };
-
-    let msg_str = c_str.to_str().unwrap();
+    let hashed_message = unsafe {slice::from_raw_parts(keccak256_payload, keccak256_payload_len)};
+    let hashed_message: Vec<u8> = Vec::from(hashed_message);
 
     let presign_task = async move {
         let isolate = Isolate::new(port_);
-        let result = gg20_mpc::sign_run(index, presign_share, msg_str).await;
-        isolate.post(result);
+        let (sig_r_bigint, sig_s_bigint, sig_v) = gg20_mpc::sign_run(index, presign_share, hashed_message).await.unwrap();
+        isolate.post(sig_r_bigint);
+        isolate.post(sig_s_bigint);
+        isolate.post(sig_v);
     }.into_ffi();
 
     rt.spawn(presign_task);

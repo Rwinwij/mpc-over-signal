@@ -147,6 +147,20 @@ pub struct SignatureRecid {
     pub recid: u8,
 }
 
+impl SignatureRecid {
+    /// Public key of secret shared between parties
+    pub fn sig_r(&self) -> BigInt {
+        self.r.to_bigint()
+    }
+    /// Public key of secret shared between parties
+    pub fn sig_s(&self) -> BigInt {
+        self.s.to_bigint()
+    }
+    pub fn sig_v(&self) -> u8 {
+        self.recid.clone()
+    }
+}
+
 pub fn generate_h1_h2_N_tilde() -> (BigInt, BigInt, BigInt, BigInt, BigInt) {
     // note, should be safe primes:
     // let (ek_tilde, dk_tilde) = Paillier::keypair_safe_primes().keys();;
