@@ -66,7 +66,7 @@ pub async fn http_local_run()
     gg20_sm_manager::run_http();
 }
 
-pub async fn keygen_run(index:u16, port_: i64) -> Result<String> {
+pub async fn keygen_run(index:u16, port_: i64) -> Result<(String, String, String, String)> {
     
     let args: DkgCli = DkgCli::from_args();
 
@@ -83,6 +83,10 @@ pub async fn keygen_run(index:u16, port_: i64) -> Result<String> {
         .run()
         .await
         .map_err(|e| anyhow!("dkg: protocol execution terminated with error: {}", e))?;
+
+    let pubkey_x_bigint: String = output.public_key_x().unwrap().to_string();
+    let pubkey_y_bigint: String = output.public_key_y().unwrap().to_string();
+    let pubkey_encoded_point = serde_json::to_string(&output.public_key()).context("serialize pubkey_encoded_point")?;
 
     let output = serde_json::to_vec_pretty(&output).context("serialize output")?;
     /*
@@ -102,7 +106,7 @@ pub async fn keygen_run(index:u16, port_: i64) -> Result<String> {
         Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
     };
 
-    Ok(s.to_owned())
+    Ok( (s.to_owned(), pubkey_x_bigint, pubkey_y_bigint, pubkey_encoded_point) )
     
 }
 

@@ -52,8 +52,11 @@ pub extern "C" fn wire_keygen(
     let rt = runtime!();
     let keygen_task = async move {
         let isolate = Isolate::new(port_);
-        let result = gg20_mpc::keygen_run(index, port_).await;
-        isolate.post(result);
+        let (keyshare, pubkey_x_bigint, pubkey_y_bigint, pubkey_encoded_point) = gg20_mpc::keygen_run(index, port_).await.unwrap();
+        isolate.post(keyshare); //private keyshare to be saved and encrypted on mobile using secure enslave
+        isolate.post(pubkey_x_bigint); //BIG INT point X
+        isolate.post(pubkey_y_bigint); //BIG INT point Y
+        isolate.post(pubkey_encoded_point); //encoded ECPoint, need to be decoded on mobile using ECPoint constructor
     }.into_ffi();
 
     rt.spawn(keygen_task);

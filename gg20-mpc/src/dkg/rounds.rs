@@ -16,6 +16,8 @@ use crate::common::party_i::{KeyGenBroadcastMessage1,KeyGenDecommitMessage1, Key
 
 use crate::common::{self, ErrorType};
 
+use curv::BigInt;
+
 pub struct Round0 {
     pub party_i: u16,
     pub t: u16,
@@ -332,6 +334,13 @@ impl LocalKey<Secp256k1> {
     /// Public key of secret shared between parties
     pub fn public_key(&self) -> Point<Secp256k1> {
         self.y_sum_s.clone()
+    }
+    /// Public key of secret shared between parties
+    pub fn public_key_x(&self) -> Option<BigInt> {
+        self.y_sum_s.x_coord()
+    }
+    pub fn public_key_y(&self) -> Option<BigInt> {
+        self.y_sum_s.y_coord()
     }
 }
 
