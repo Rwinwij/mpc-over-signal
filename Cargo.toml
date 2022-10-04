@@ -1,6 +1,6 @@
 [workspace]
 
 members = [
-    "mpc-over-signal",
-    "gg20-multi-party-ecdsa",
+    "gg20-mpc",
+    "gg20-mpc-ffi",
 ]
